@@ -25,9 +25,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 bat "docker rmi -f $IMAGE_NAME || true" 
-                bat "docker build -t $IMAGE_NAME ."
-                bat 'docker images | findstr $IMAGE_NAME' 
-            }
+                bat "docker build -t $IMAGE_NAME ."     
+                bat "docker images | findstr %IMAGE_NAME%"
+                }
         }
 
         stage('Copy Static Files to Nginx') {
