@@ -25,13 +25,6 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
-            steps {
-                bat "docker rm -f $IMAGE_NAME || true"
-                bat "docker run -d --name $IMAGE_NAME -p 80:80 $IMAGE_NAME"
-            }
-        }
-
         stage('Copy Build to Nginx') {
             steps {
                 script {
