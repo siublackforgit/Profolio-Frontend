@@ -2,52 +2,49 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'profolio-frontend-app'
+        // Nginx hosted directory (match your existing Nginx configuration)
         NGINX_DEPLOY_PATH = "E:/HostFiles/Profolio/Frontend/build"
-        TEMP_CONTAINER_NAME = "${IMAGE_NAME}-temp"  
+        // Local React build directory (default output of `npm run build` in Create React App)
+        REACT_BUILD_PATH = "${WORKSPACE}/build"
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
+                // Install npm dependencies for the React project
                 bat 'npm install'
+                // Verify npm environment is working
                 bat 'npm -v'
             }
         }
 
         stage('Build React App') {
             steps {
+                // Build React app for production (outputs to ${REACT_BUILD_PATH})
                 bat 'npm run build'
-                bat 'dir build'  
+                // Verify local build success: list files in the React build directory
+                bat "dir \"${REACT_BUILD_PATH}\""
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                bat "docker rmi -f $IMAGE_NAME || true" 
-                bat "docker build -t $IMAGE_NAME ."     
-                bat "docker images | findstr %IMAGE_NAME%"
-                }
-        }
-
-        stage('Copy Static Files to Nginx') {
+        stage('Copy React Build to Nginx') {
             steps {
                 script {
+                    // 1. Create Nginx deploy directory if it doesn't exist
+                    bat "if not exist \"${NGINX_DEPLOY_PATH}\" mkdir \"${NGINX_DEPLOY_PATH}\""
                     
-                    bat "docker run -d --name $TEMP_CONTAINER_NAME $IMAGE_NAME"
+                    // 2. Clear old files in Nginx directory (avoid residual files from previous builds)
+                    bat "del /q /s \"${NGINX_DEPLOY_PATH}\\*\""
                     
-                     
-                    bat "if not exist \"$NGINX_DEPLOY_PATH\" mkdir \"$NGINX_DEPLOY_PATH\""
+                    // 3. Copy React build files to Nginx (including subdirectories like `static`)
+                    // /E: Copy all subdirectories (including empty ones)
+                    // /H: Copy hidden and system files
+                    // /C: Continue copying even if errors occur
+                    // /Y: Suppress "overwrite" prompts
+                    bat "xcopy \"${REACT_BUILD_PATH}\\*\" \"${NGINX_DEPLOY_PATH}\" /E /H /C /Y"
                     
-                    bat "del /q /s \"$NGINX_DEPLOY_PATH\\*\""
-                    
-                    bat "docker cp ${TEMP_CONTAINER_NAME}:/usr/share/nginx/html/. \"$NGINX_DEPLOY_PATH\""
-                    
-                    
-                    bat "dir \"$NGINX_DEPLOY_PATH\""
-                    
-                    
-                    bat "docker rm -f $TEMP_CONTAINER_NAME || true"
+                    // 4. Verify copy success: list files in the Nginx deploy directory
+                    bat "dir \"${NGINX_DEPLOY_PATH}\""
                 }
             }
         }
@@ -56,15 +53,13 @@ pipeline {
     post {
         always {
             echo 'Pipeline completed.'
-            
         }
         success {
-            echo "✅ 静态文件已部署到 Nginx 目录：$NGINX_DEPLOY_PATH"
+            echo " Deployment successful! React build copied to Nginx directory: ${NGINX_DEPLOY_PATH}"
+            echo " Access your app via Nginx's configured port (e.g., http://localhost)"
         }
         failure {
-            echo '❌ Pipeline failed! 请检查日志。'
-            
-            bat "docker rm -f $TEMP_CONTAINER_NAME || true"
+            echo ' Deployment failed! Check logs for errors (e.g., directory permissions, npm dependency issues)'
         }
     }
 }
