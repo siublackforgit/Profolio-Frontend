@@ -1,4 +1,5 @@
 import React from 'react';
+import { createRoot, hydrate } from 'react-dom'
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -10,7 +11,7 @@ if (rootElement.hasChildNodes()) {
   hydrate(
     <React.StrictMode>
       <App />
-    </React.StrictMode>
+    </React.StrictMode>,
     rootElement
   )
 } else {
