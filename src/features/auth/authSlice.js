@@ -1,4 +1,4 @@
-import createSlice from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { registerUser } from './authAction';
 
 const authSlice = createSlice({
@@ -26,3 +26,5 @@ const authSlice = createSlice({
                 })
     }
 })
+
+export default authSlice.reducer;

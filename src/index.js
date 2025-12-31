@@ -1,7 +1,8 @@
 import React from 'react';
 import { createRoot, hydrate } from 'react-dom'
 import ReactDOM from 'react-dom/client';
-import Provider from 'react-redux';
+import {hydrateRoot } from 'react-dom/client'
+import { Provider} from 'react-redux';
 import { store } from './app/store';
 import './index.css';
 import App from './App';
@@ -10,16 +11,17 @@ import reportWebVitals from './reportWebVitals';
 const rootElement = document.getElementById('root');
 
 if (rootElement.hasChildNodes()) {
-  hydrate(
+  // NEW: hydrateRoot syntax
+  hydrateRoot(
+    rootElement,
     <React.StrictMode>
       <Provider store={store}>
          <App />
       </Provider>
-    </React.StrictMode>,
-    rootElement
-  )
+    </React.StrictMode>
+  );
 } else {
-  const root = ReactDOM.createRoot(document.getElementById('root'));
+  const root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
       <Provider store={store}>
@@ -28,7 +30,6 @@ if (rootElement.hasChildNodes()) {
     </React.StrictMode>
   );
 }
-
 
 
 

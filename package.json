@@ -46,6 +46,7 @@
     "npm": ">=10.5.0"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "react-snap": "^1.23.0"
   },
   "homepage": ".",
