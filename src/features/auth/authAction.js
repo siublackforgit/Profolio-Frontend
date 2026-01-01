@@ -20,3 +20,20 @@ export const registerUser = createAsyncThunk(
     }
 )
 
+export const loginEmail = createAsyncThunk(
+    'auth/loginEmail',
+    async (userData, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/loginEmail`, {
+                email: userData.email,
+                password: userData.password
+            });
+            
+            // Typically you store the token in localStorage here or in the extraReducers
+            return response.data; 
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Login failed");
+        }
+    }
+);
+
