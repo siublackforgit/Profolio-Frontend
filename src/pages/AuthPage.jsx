@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { registerUser, loginEmail } from '../features/auth/authAction';
 import "../App.css"
 
@@ -14,21 +15,37 @@ const AuthPage = () => {
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const authState = useSelector((state) => state.auth || {});
   const { isLoading, error, isSuccess, message } = authState;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isLogin) {
-      console.log("Logging in with:", formData.email);
-      dispatch(loginEmail({...formData}))
-    } else {
-      dispatch(registerUser({ ...formData }));
+    try {
+      if (isLogin) {
+        console.log("Logging in with:", formData.email);
+        dispatch(loginEmail({ ...formData }))
+      } else {
+        dispatch(registerUser({ ...formData }));
+      }
+    } catch (e) {
+      console.log("Failed Login error message:" + e);
     }
   };
 
+  useEffect(() => {
+    let timer;
+    if (isSuccess) {
+      timer = setTimeout(() => {
+        navigate('/home');
+      }, 1000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isSuccess, navigate]);
+
   return (
-    <div 
+    <div
       className="min-vh-100 d-flex align-items-center justify-content-center py-4"
       style={{ backgroundColor: '#0F172A' }}
     >
@@ -50,8 +67,8 @@ const AuthPage = () => {
                       <span className="input-group-text bg-transparent border-white text-white">
                         <i className="bi bi-person"></i>
                       </span>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         className="form-control bg-transparent border-white text-white"
                         placeholder="display name"
@@ -68,8 +85,8 @@ const AuthPage = () => {
                     <span className="input-group-text bg-transparent border-white text-white">
                       <i className="bi bi-envelope"></i>
                     </span>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       required
                       className="form-control bg-transparent border-white text-white"
                       placeholder="webmail@email.com"
@@ -85,7 +102,7 @@ const AuthPage = () => {
                     <span className="input-group-text bg-transparent border-white text-white">
                       <i className="bi bi-lock"></i>
                     </span>
-                    <input 
+                    <input
                       type={showPassword ? "text" : "password"}
                       required
                       className="form-control bg-transparent border-white text-white"
@@ -94,7 +111,7 @@ const AuthPage = () => {
                         setFormData(prev => ({ ...prev, password: e.target.value }));
                       }}
                     />
-                    <button 
+                    <button
                       type="button"
                       className="btn bg-transparent border-white text-white"
                       onClick={() => setShowPassword(!showPassword)}
@@ -104,8 +121,8 @@ const AuthPage = () => {
                   </div>
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={isLoading}
                   className="w-100 btn py-2 mb-3"
                   style={{ backgroundColor: '#3B82F6', color: 'white', border: 'none' }}
@@ -118,7 +135,7 @@ const AuthPage = () => {
               {isSuccess && <p className="text-success text-center text-sm">{message}</p>}
 
               <div className="text-center mt-4">
-                <button 
+                <button
                   onClick={() => setIsLogin(!isLogin)}
                   className="text-primary text-decoration-none bg-transparent border-0 p-0"
                 >

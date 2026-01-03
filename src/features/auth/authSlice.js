@@ -33,6 +33,7 @@ const authSlice = createSlice({
                 state.isSuccess = true;
                 state.message = "Login successful!";
                 // Save token or user info here
+                
             })
             .addCase(loginEmail.rejected, (state, action) => {
                 state.isLoading = false;
