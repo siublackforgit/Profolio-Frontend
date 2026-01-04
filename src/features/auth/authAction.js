@@ -5,7 +5,7 @@ export const registerUser = createAsyncThunk(
     'auth/registerUser',
     async (userData, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register/email`, null, {
+            const response = await axios.post(`/auth/register/email`, null, {
                 params: {
                     email: userData.email,
                     password: userData.password,
@@ -24,7 +24,7 @@ export const loginEmail = createAsyncThunk(
     'auth/loginEmail',
     async (userData, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/loginEmail`, {
+            const response = await axios.post(`/auth/loginEmail`, {
                 email: userData.email,
                 password: userData.password
             });
