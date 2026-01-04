@@ -4,6 +4,7 @@ import { registerUser, loginEmail } from './authAction';
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
+        user: null,
         isLoading: false,
         isSuccess: false,
         error: null,
@@ -32,8 +33,8 @@ const authSlice = createSlice({
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.message = "Login successful!";
-                // Save token or user info here
-                
+                // Save user info here
+                state.user = action.payload;
             })
             .addCase(loginEmail.rejected, (state, action) => {
                 state.isLoading = false;
