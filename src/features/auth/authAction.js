@@ -37,3 +37,15 @@ export const loginEmail = createAsyncThunk(
     }
 );
 
+export const logOut = createAsyncThunk(
+    'auth/logOut',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await api.post(`/auth/logOut`);
+            return response.data; 
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Log  failed");
+        }
+    }
+);
+
