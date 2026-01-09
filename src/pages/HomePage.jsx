@@ -1,18 +1,21 @@
 import React, {useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { logOut } from '../features/auth/authAction';
 import Navbar from '../component/Nav/Navbar';
 import menuData from '../data/MenuData';
 
 const HomePage = () => {
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authState = useSelector((state) => state.auth || {});
   const { user } = authState;
 
   useEffect(() => {
+    
     let timer;
+    console.log("user",user);
     if (user == null) {
       timer = setTimeout(() => {
         navigate('/auth');

@@ -37,6 +37,22 @@ export const loginEmail = createAsyncThunk(
     }
 );
 
+export const getUserFromToken = createAsyncThunk(
+    'auth/getUserFromToken',
+    async (tempToken, { rejectWithValue }) => {
+        try {
+            const response = await api.post(`/auth/getUserFromToken`, {
+                tempToken:tempToken
+            });
+            
+            // Typically you store the token in localStorage here or in the extraReducers
+            return response.data; 
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "LoggetUserFromTokenin failed");
+        }
+    }
+);
+
 export const logOut = createAsyncThunk(
     'auth/logOut',
     async (_, { rejectWithValue }) => {

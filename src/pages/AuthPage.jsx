@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { registerUser, loginEmail } from '../features/auth/authAction';
+import { useNavigate, useSearchParams  } from 'react-router-dom';
+import { registerUser, loginEmail, getUserFromToken } from '../features/auth/authAction';
 import "../App.css"
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -33,7 +35,25 @@ const AuthPage = () => {
     }
   };
 
+  const handleGoogleOauth = () => {
+    setIsRedirecting(true);
+    window.location.href = process.env.REACT_APP_API_URL+"/oauth2/authorization/google"
+  }
+
   useEffect(() => {
+    const tempToken = searchParams.get('tempToken');
+
+    if (tempToken) {
+      console.log("Found token:", tempToken);
+      dispatch(getUserFromToken(tempToken));
+
+      // Clean the URL so the token isn't reused or leaked in history
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, dispatch, setSearchParams]);
+
+  useEffect(() => {
+    console.log("reached Auth")
     let timer;
     if (isSuccess) {
       timer = setTimeout(() => {
@@ -133,6 +153,15 @@ const AuthPage = () => {
 
               {error && <p className="text-danger text-center text-sm">{error}</p>}
               {isSuccess && <p className="text-success text-center text-sm">{message}</p>}
+
+              <div className="text-center mt-4">
+                <button
+                  onClick={() => handleGoogleOauth()} disabled={isRedirecting}
+                  className="text-primary text-decoration-none bg-transparent border-0 p-0 text-red"
+                >
+                 {isRedirecting ? "Redirecting to Google..." : "Sign in with Google"}
+                </button>
+              </div>
 
               <div className="text-center mt-4">
                 <button
