@@ -10,7 +10,17 @@ const authSlice = createSlice({
         error: null,
         message: ''
     },
-
+    reducers: {
+        setUser: (state, action) => {
+            state.user = action.payload;  
+            state.isSuccess = true;
+            state.error = null;
+        },
+        clearAuth: (state) => {
+            state.user = null;
+            state.isSuccess = false;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(registerUser.pending, (state) => {
@@ -74,5 +84,7 @@ const authSlice = createSlice({
             })
     }
 })
+
+export const { setUser, clearAuth } = authSlice.actions;
 
 export default authSlice.reducer;
