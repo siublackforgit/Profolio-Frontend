@@ -64,6 +64,7 @@ const authSlice = createSlice({
                 state.isSuccess = false;
                 state.message = "LogOut successful!";
                 state.user = null;
+                localStorage.removeItem('userDto'); 
             })
             .addCase(logOut.rejected, (state, action) => {
                 state.isLoading = false;
