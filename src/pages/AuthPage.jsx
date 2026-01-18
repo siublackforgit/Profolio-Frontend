@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useSearchParams  } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { registerUser, loginEmail, getUserFromToken } from '../features/auth/authAction';
+import LoadingSpinner from '../component/LoadingSpinner/LoadingSpinner';
 import "../App.css"
 
 const AuthPage = () => {
@@ -37,7 +38,7 @@ const AuthPage = () => {
 
   const handleGoogleOauth = () => {
     setIsRedirecting(true);
-    window.location.href = process.env.REACT_APP_API_URL+"/oauth2/authorization/google"
+    window.location.href = process.env.REACT_APP_API_URL + "/oauth2/authorization/google"
   }
 
   useEffect(() => {
@@ -147,7 +148,12 @@ const AuthPage = () => {
                   className="w-100 btn py-2 mb-3"
                   style={{ backgroundColor: '#3B82F6', color: 'white', border: 'none' }}
                 >
-                  {isLoading ? 'Processing...' : (isLogin ? 'Log In' : 'Create my account')}
+                  {isLoading ? (
+                    <>
+                      <LoadingSpinner size="18px" color="#FFFFFF" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (isLogin ? 'Log In' : 'Create my account')}
                 </button>
               </form>
 
@@ -159,7 +165,7 @@ const AuthPage = () => {
                   onClick={() => handleGoogleOauth()} disabled={isRedirecting}
                   className="text-primary text-decoration-none bg-transparent border-0 p-0 text-red"
                 >
-                 {isRedirecting ? "Redirecting to Google..." : "Sign in with Google"}
+                  {isRedirecting ? "Redirecting to Google..." : "Sign in with Google"}
                 </button>
               </div>
 

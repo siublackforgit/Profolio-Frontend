@@ -4,7 +4,9 @@ import { registerUser, loginEmail, logOut, getUserFromToken } from './authAction
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        user: null,
+        user: localStorage.getItem('userDto') 
+            ? JSON.parse(localStorage.getItem('userDto')) 
+            : null,
         isLoading: false,
         isSuccess: false,
         error: null,
@@ -46,6 +48,7 @@ const authSlice = createSlice({
                 state.message = "Login successful!";
                 // Save user info here
                 state.user = action.payload;
+                localStorage.setItem('userDto', JSON.stringify(action.payload));
             })
             .addCase(loginEmail.rejected, (state, action) => {
                 state.isLoading = false;
