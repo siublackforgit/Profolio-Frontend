@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { registerUser, loginEmail, getUserFromToken } from '../features/auth/authAction';
 import LoadingSpinner from '../component/LoadingSpinner/LoadingSpinner';
+import googleBtnImg from '../assets/web_light_sq_SU.svg';
 import "../App.css"
 
 const AuthPage = () => {
@@ -162,10 +163,20 @@ const AuthPage = () => {
 
               <div className="text-center mt-4">
                 <button
-                  onClick={() => handleGoogleOauth()} disabled={isRedirecting}
-                  className="text-primary text-decoration-none bg-transparent border-0 p-0 text-red"
+                  onClick={() => handleGoogleOauth()}
+                  disabled={isRedirecting}
+                  className="bg-transparent border-0 p-0 hover:opacity-90 active:scale-95 transition-all"
+                  aria-label="Sign in with Google"
                 >
-                  {isRedirecting ? "Redirecting to Google..." : "Sign in with Google"}
+                  {isRedirecting ? (
+                    <span className="text-primary text-sm">Redirecting to Google...</span>
+                  ) : (
+                    <img
+                      src={googleBtnImg}
+                      alt="Sign in with Google"
+                      style={{ width: '240px' }} 
+                    />
+                  )}
                 </button>
               </div>
 
