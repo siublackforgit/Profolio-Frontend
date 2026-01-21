@@ -21,7 +21,7 @@ const AuthPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authState = useSelector((state) => state.auth || {});
-  const { isLoading, error, isSuccess, message } = authState;
+  const { isLoading, error, isSuccess, message, user } = authState;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,7 +57,7 @@ const AuthPage = () => {
   useEffect(() => {
     console.log("reached Auth")
     let timer;
-    if (isSuccess) {
+    if ( user != null ) {
       timer = setTimeout(() => {
         navigate('/home');
       }, 1000);
